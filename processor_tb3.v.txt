@@ -1,0 +1,57 @@
+module testbench1;
+reg clk1, clk2;
+integer k;
+processor DUT(clk1, clk2);
+initial
+begin
+clk1=0;
+forever
+begin
+#5 clk1=1;
+#5 clk1=0;
+#10 clk1=0;
+end
+end
+initial
+begin
+clk2=0;
+forever
+begin
+#15 clk2=1;
+#5 clk2=0;
+end
+end
+initial
+begin
+for(k=0; k<32; k=k+1)
+DUT.regfile[k]=k;
+end
+initial
+begin
+DUT.mem[0]=32'h280a00c8;
+DUT.mem[1]=32'h28020001;
+DUT.mem[2]=32'h21430000;
+DUT.mem[3]=32'h0e94a000;
+DUT.mem[4]=32'h14431000;
+DUT.mem[5]=32'h2c630001;
+DUT.mem[6]=32'h0e94a000;
+DUT.mem[7]=32'h3460fffc;
+DUT.mem[8]=32'h2542fffe;
+DUT.mem[9]=32'hfc000000;
+DUT.mem[200]=7;
+end
+initial
+begin
+DUT.PC=0;
+DUT.HALTED=0;
+DUT.TAKEN_BRANCH=0;
+#1000 $display("mem[200] = %1d, mem[198] = %1d", DUT.mem[200], DUT.mem[198]);
+#10 $finish;
+end
+initial
+begin
+$monitor("regfile[2] = %1d", DUT.regfile[2]);
+$dumpfile("processor.vcd");
+$dumpvars(0, testbench1);
+end
+endmodule
